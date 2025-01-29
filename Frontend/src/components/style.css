@@ -102,7 +102,6 @@
     padding: 30px;
     width: 90vh;
     margin-top: 0px;
-    overflow-y: auto;
     color: black;
 }
 
@@ -156,5 +155,17 @@
 
 .clicked{
     background-color: yellow;
+}
+
+.redirect-button{
+    margin-top: 10px;
+    justify-content: center;
+    margin-right: 50px;
+}
+
+.design_container{
+    background-color: bisque;
+    height: 100%;
+    width: 100%;
 }
 
