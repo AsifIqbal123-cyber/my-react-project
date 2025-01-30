@@ -163,9 +163,26 @@
     margin-right: 50px;
 }
 
-.design_container{
-    background-color: bisque;
-    height: 100%;
-    width: 100%;
+
+
+.dashboard{
+    background-color: beige;
+    justify-content: center;
+    align-items: center;
+    height: 700px;
+    width: 1000px;
 }
 
+.dashboard>button{
+    position:relative;
+    right: 300px;
+    top: 100px;
+    margin-top: 10px;
+}
+
+.product_title{
+    color: black;
+    position: relative;
+    bottom:180px;
+    left: 30px;
+}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -19,6 +19,8 @@ import Selection from './pages/Selection';
 import Personal from './pages/Personal';
 import Theme from './pages/Theme';
 import Design from './pages/Design';
+
+
 
 function App() {
   return (
