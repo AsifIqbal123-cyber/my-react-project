@@ -180,9 +180,40 @@
     margin-top: 10px;
 }
 
-.product_title{
+.product_title>h2{
     color: black;
     position: relative;
     bottom:180px;
     left: 30px;
+}
+
+.product_title>img{
+    position:relative;
+    height: 310px;
+    bottom:140px;
+    left: 40px;
+}
+
+.popup_content{
+    position:fixed;
+    display: block;
+    top: 20%;
+    left: 25%;
+    background-color: #ccc;
+    height: 60%;
+    width: 50vw;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.design_1{
+    width: 10px;
+}
+
+.logo{
+    
+    width: 10px;
+    height: 10px;
 }
