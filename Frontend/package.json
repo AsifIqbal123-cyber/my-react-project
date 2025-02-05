@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-images":"node generateImages.js",
+    "start":"npm run generate-images && react-scripts start"
   },
   "dependencies": {
     "axios": "^1.7.9",

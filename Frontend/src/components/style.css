@@ -180,6 +180,10 @@
     margin-top: 10px;
 }
 
+.product_title{
+    position: relative;
+}
+
 .product_title>h2{
     color: black;
     position: relative;
@@ -208,12 +212,53 @@
     overflow-y: auto;
 }
 
-.design_1{
-    width: 10px;
+
+.selected_design>img{
+    position: absolute;
+    top: 0.45%;
+    right: 41%;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
 }
 
-.logo{
-    
-    width: 10px;
-    height: 10px;
+
+.editor-container {
+    width: 60%;
+    margin: -90px auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background: #fff;
+    margin-right: 60px;
+
+}
+
+.toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.toolbar button {
+    padding: 5px 10px;
+    border: none;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.toolbar button:hover {
+    background: #0056b3;
+}
+
+.editor {
+    min-height: 200px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    outline: none;
+    font-size: 16px;
+    color:#333;
 }

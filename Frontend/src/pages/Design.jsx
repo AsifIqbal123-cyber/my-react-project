@@ -2,7 +2,15 @@ import React from "react";
 import '../components/style.css';
 import { useState, useEffect } from "react";
 import mensVNeck from '../assets/mens_v_neck.webp';
-import design_1 from '../assets/design_1.png'
+import design_1 from '../images/design_1.png';
+import imagepool from '../images.js';
+import TextEditor from '../components/add_text.jsx';
+
+
+
+
+
+const imagesDirectory = '../images';
 
 const Design = () => {
     const [product,setProduct] = useState(
@@ -13,7 +21,8 @@ const Design = () => {
     const [popDesign,setpopDesign] = useState(null)
     const [designPopupVisible,setDesignPopupVisible]=useState(false);
     const [design,setDesign]=useState(null);
-
+    const [textbox, setTextBox] =useState(false);
+    const [uploadbox,setUploadBox] =useState(false);
 
     const handleDesignSelect =(selectedDesign) => {
         setDesign(selectedDesign);
@@ -25,6 +34,8 @@ const Design = () => {
         setDesignPopupVisible(false);
     }
 
+  
+
     return (
         <div className="design_container">
             <div className="dashboard" >
@@ -32,15 +43,25 @@ const Design = () => {
                 <br />
                 <button className="design" onClick={()=>setDesignPopupVisible(!designPopupVisible)}>Choose a design</button>
                 <br />
-                <button className="text">Add a text</button>
+                <button className="text" onClick={()=>setTextBox(!textbox)}>Add a text</button>
                 <br />
-                <button className="image">Upload an image</button>
+                <button className="image" onClick={()=>setUploadBox(!uploadbox)}>Upload an image</button>
+
                 <div className="product_title">
                 {isVisible&&(<div className="product_title">
                     <h2>Product - {product.name}</h2>
                     <img src={product.image}/></div>)}
-                    <p className="logo">{design && (<img src={design} alt="selected Design"/>)}</p>
-                </div>
+               
+
+                {design && (
+                    <div className="selected_design">
+                        <img src={design} alt="Selected Design"/>
+                    </div>
+                )
+                }
+                 </div>
+
+
 
                 {designPopupVisible && (<div className="popup"> 
                                             <div className="popup_content">
@@ -50,16 +71,45 @@ const Design = () => {
                                                 <button onClick={()=> setDesignPopupVisible(!designPopupVisible)}>Close <br/></button>     
                                                 
 
-                                                <p><button onClick={() => handleDesignSelect(design_1)}><img src={design_1} alt="design_1" /></button> <br/></p>
+                                                <div>
+                                                    {imagepool.map((src, index) => (
+                                                        <button key={index} onClick={() => handleDesignSelect(src)}>
+                                                            <img src={src} alt={`Design ${index + 1}`} style={{ width: "100px", margin: "10px" }} />
+                                                        </button>
+                                                    ))}
+                                                </div>
                                                 
                                                 <p><button onClick={()=> clearDesign()}>Clear Design</button></p>
-                                                <p>{design && <img src={design} alt="selected Design"/>}<br/></p>   
+                                                <p>{design && (
+                                                <>
+                                                <h2>Design choosen</h2><img src={design} alt="selected Design" style={{width:"100px",margin:"10px"}}/>
+                                                </>
+                                                )}<br/></p>   
+                                            
                                             </div>
                                         </div>)}
-            </div>
+
+                {/* {textbox && (<div className="text">
+                                <div className="text_editor">
+                                                    
+                                <h2>Write Something</h2>
+                                <button onClick={()=> setTextBox(!textbox)}>Close<br/></button>
+                                <div>
+                                    {
+                                        
+                                    }
+                                </div>
 
 
-            
+                            </div>                        
+                    </div> */
+                    
+                    textbox && (
+                        <TextEditor/>
+                    )}
+                    
+                    
+            </div>  
         </div>
     );
 };
