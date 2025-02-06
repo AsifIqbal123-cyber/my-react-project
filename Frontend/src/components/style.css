@@ -236,6 +236,8 @@
 }
 
 .toolbar {
+    position: relative;
+    z-index: 10;
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
@@ -261,4 +263,34 @@
     outline: none;
     font-size: 16px;
     color:#333;
+}
+.editor{
+    border: 1px solid #ccc;
+    padding: 10px;
+    min-height: 100px;
+    cursor: text;
+}
+
+.overlay_text{
+    position: absolute;
+    top: 0.45%;
+    right: 41%;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+}
+
+.uploadbox{
+    width: 30%;
+    margin: -90px auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background: #fff;
+    margin-right: 60px;
+}
+
+.button.image{
+    position: absolute;
 }

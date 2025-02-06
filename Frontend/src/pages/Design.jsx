@@ -23,6 +23,7 @@ const Design = () => {
     const [design,setDesign]=useState(null);
     const [textbox, setTextBox] =useState(false);
     const [uploadbox,setUploadBox] =useState(false);
+    const [text,setText]=useState("")
 
     const handleDesignSelect =(selectedDesign) => {
         setDesign(selectedDesign);
@@ -34,6 +35,13 @@ const Design = () => {
         setDesignPopupVisible(false);
     }
 
+    const handleData = (data) => {
+        setText(data);
+    };
+
+    const closeTextEditor=()=>{
+        setTextBox(false);
+    };
   
 
     return (
@@ -59,7 +67,14 @@ const Design = () => {
                     </div>
                 )
                 }
-                 </div>
+
+                {text && (<div className="overlay_text">{text}</div>)}
+
+                {uploadbox &&(
+                    <div className="uploadbox"><h2>Hello</h2></div>
+                )}
+
+                </div>
 
 
 
@@ -89,24 +104,11 @@ const Design = () => {
                                             </div>
                                         </div>)}
 
-                {/* {textbox && (<div className="text">
-                                <div className="text_editor">
-                                                    
-                                <h2>Write Something</h2>
-                                <button onClick={()=> setTextBox(!textbox)}>Close<br/></button>
-                                <div>
-                                    {
-                                        
-                                    }
-                                </div>
-
-
-                            </div>                        
-                    </div> */
-                    
-                    textbox && (
-                        <TextEditor/>
+                {textbox && (
+                        <TextEditor onSendData={handleData} closeTextEditor={closeTextEditor} />
                     )}
+
+       
                     
                     
             </div>  
