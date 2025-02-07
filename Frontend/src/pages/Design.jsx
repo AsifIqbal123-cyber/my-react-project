@@ -23,17 +23,19 @@ const Design = () => {
     const [design,setDesign]=useState(null);
     const [textbox, setTextBox] =useState(false);
     const [uploadbox,setUploadBox] =useState(false);
-    const [text,setText]=useState("")
+    const [text,setText]=useState("");
+    const [uploadedImage,setUploadedImage]=useState(null);
+
 
     const handleDesignSelect =(selectedDesign) => {
         setDesign(selectedDesign);
         setDesignPopupVisible(false);
-    }
+    };
 
     const clearDesign =() =>{
         setDesign(null);
         setDesignPopupVisible(false);
-    }
+    };
 
     const handleData = (data) => {
         setText(data);
@@ -42,6 +44,43 @@ const Design = () => {
     const closeTextEditor=()=>{
         setTextBox(false);
     };
+
+    const handleImageUpload= async(event)=>{
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file",file);
+
+        try{
+            const response = await fetch("http://localhost:8000/upload/", {
+                method: "POST",
+                body: formData,
+            });
+        
+
+        const data = await response.json();
+
+        if (response.ok){
+            alert("File uploaded successfully!");
+            setUploadedImage(data.file_url);
+        } else {
+            alert("Error: ${data.error}");
+        }
+    }catch(error){
+        console.error("Upload error",error);
+    }
+    };
+
+    const clearUpload =()=>{
+        setUploadedImage(null);
+        setUploadBox(false);
+    };
+
+    const saveImage=()=>{
+    }
+
+  
   
 
     return (
@@ -55,7 +94,7 @@ const Design = () => {
                 <br />
                 <button className="image" onClick={()=>setUploadBox(!uploadbox)}>Upload an image</button>
 
-                <div className="product_title">
+                <div >
                 {isVisible&&(<div className="product_title">
                     <h2>Product - {product.name}</h2>
                     <img src={product.image}/></div>)}
@@ -70,9 +109,23 @@ const Design = () => {
 
                 {text && (<div className="overlay_text">{text}</div>)}
 
-                {uploadbox &&(
-                    <div className="uploadbox"><h2>Hello</h2></div>
+                {uploadbox && (
+                <div className="uploadbox">
+                <button onClick={clearUpload}>Close <br/></button>     
+                <h2 style={{color:"black"}}>Upload Your Image</h2>
+                <input type="file" accept="image/*" onChange={handleImageUpload} />
+
+                {uploadedImage && (
+                    <div className="uploaded-image-preview">
+                        <h3 style={{color:"black"}}>Preview:</h3>
+                        <img src={uploadedImage} alt="Uploaded" style={{width:"150px", marginTop:"10px"}}/>
+                        <br></br>
+                        <button onClick={saveImage()}>Upload</button>
+                    </div>
                 )}
+                </div>
+                )}
+
 
                 </div>
 
