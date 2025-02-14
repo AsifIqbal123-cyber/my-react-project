@@ -5,6 +5,9 @@ import mensVNeck from '../assets/mens_v_neck.webp';
 import design_1 from '../images/design_1.png';
 import imagepool from '../images.js';
 import TextEditor from '../components/add_text.jsx';
+import axios from "axios";
+import {useNavigate} from 'react-router-dom';
+
 
 
 
@@ -25,7 +28,21 @@ const Design = () => {
     const [uploadbox,setUploadBox] =useState(false);
     const [text,setText]=useState("");
     const [uploadedImage,setUploadedImage]=useState(null);
+    const navigate = useNavigate();
 
+    const user_data ={
+        design:design,
+        text:text,
+        product:product,
+    };
+
+
+    useEffect(() => {
+        setProduct({
+            name: localStorage.getItem('selectedSpecificType') || null,
+            image: mensVNeck,
+        });
+    }, []);
 
     const handleDesignSelect =(selectedDesign) => {
         setDesign(selectedDesign);
@@ -51,19 +68,24 @@ const Design = () => {
 
         const formData = new FormData();
         formData.append("file",file);
-
         try{
             const response = await fetch("http://localhost:8000/upload/", {
                 method: "POST",
                 body: formData,
+                headers:{
+
+                },
             });
         
 
         const data = await response.json();
-
+   
         if (response.ok){
+            const fullUrl = `${data.file_url}`
+            console.log(fullUrl);
+            setUploadedImage(fullUrl);
+            setDesign(fullUrl);
             alert("File uploaded successfully!");
-            setUploadedImage(data.file_url);
         } else {
             alert("Error: ${data.error}");
         }
@@ -78,7 +100,14 @@ const Design = () => {
     };
 
     const saveImage=()=>{
+        setDesign(uploadedImage)
+        setUploadBox(!uploadbox);
     }
+
+    const sendCart=()=>{
+        
+        navigate('./cart',{state: user_data});
+    };
 
   
   
@@ -93,78 +122,86 @@ const Design = () => {
                 <button className="text" onClick={()=>setTextBox(!textbox)}>Add a text</button>
                 <br />
                 <button className="image" onClick={()=>setUploadBox(!uploadbox)}>Upload an image</button>
+                
+            </div>  
 
-                <div >
-                {isVisible&&(<div className="product_title">
-                    <h2>Product - {product.name}</h2>
-                    <img src={product.image}/></div>)}
+            <div className="functions" >
+
+                {isVisible && (
+                    <div className="product_title">
+                        <h2>Product - {product.name}</h2>
+                        <img src={product.image}alt="Selected Product"/>
+                        {text && (
+                            <div className="overlay_text" style={{display:"inline"}}>
+                                {text}
+                            </div>
+                    )
+                }
+                    </div>)
+                }
                
-
                 {design && (
                     <div className="selected_design">
                         <img src={design} alt="Selected Design"/>
-                    </div>
-                )
+                    </div>)
                 }
 
-                {text && (<div className="overlay_text">{text}</div>)}
+              
 
                 {uploadbox && (
-                <div className="uploadbox">
-                <button onClick={clearUpload}>Close <br/></button>     
-                <h2 style={{color:"black"}}>Upload Your Image</h2>
-                <input type="file" accept="image/*" onChange={handleImageUpload} />
+                    <div className="uploadbox">
+                        <button onClick={clearUpload}>Close <br/></button>     
+                        <h2 style={{color:"black"}}>Upload Your Image</h2>
+                        <input type="file" accept="image/*" onChange={handleImageUpload} />
 
-                {uploadedImage && (
-                    <div className="uploaded-image-preview">
-                        <h3 style={{color:"black"}}>Preview:</h3>
-                        <img src={uploadedImage} alt="Uploaded" style={{width:"150px", marginTop:"10px"}}/>
-                        <br></br>
-                        <button onClick={saveImage()}>Upload</button>
+                        {uploadedImage && (
+                            <div className="uploaded-image-preview">
+                                <h3 style={{color:"black"}}>Preview:</h3>
+                                <img src={uploadedImage} alt="Uploaded" style={{width:"150px", marginTop:"10px"}}/>
+                                <br></br>
+                                <button onClick={saveImage}>Upload</button>
+                            </div>)
+                        }
                     </div>
-                )}
-                </div>
-                )}
-
-
-                </div>
-
-
-
-                {designPopupVisible && (<div className="popup"> 
-                                            <div className="popup_content">
-                                                
-                                                <h2>Choose Your Design <br/></h2>
-                                                
-                                                <button onClick={()=> setDesignPopupVisible(!designPopupVisible)}>Close <br/></button>     
-                                                
-
-                                                <div>
-                                                    {imagepool.map((src, index) => (
-                                                        <button key={index} onClick={() => handleDesignSelect(src)}>
-                                                            <img src={src} alt={`Design ${index + 1}`} style={{ width: "100px", margin: "10px" }} />
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                                
-                                                <p><button onClick={()=> clearDesign()}>Clear Design</button></p>
-                                                <p>{design && (
-                                                <>
-                                                <h2>Design choosen</h2><img src={design} alt="selected Design" style={{width:"100px",margin:"10px"}}/>
-                                                </>
-                                                )}<br/></p>   
-                                            
-                                            </div>
-                                        </div>)}
-
-                {textbox && (
-                        <TextEditor onSendData={handleData} closeTextEditor={closeTextEditor} />
                     )}
 
+                <button className="add_cart" onClick={sendCart}>Add to card</button>
+            </div>
+
+                {designPopupVisible && (
+                    <div className="popup"> 
+                        <div className="popup_content">
+                            <h2>Choose Your Design <br/></h2>
+                            <button onClick={()=> setDesignPopupVisible(!designPopupVisible)}>Close <br/></button>     
+                                <div>
+                                    {imagepool.map((src, index) => (
+                                        <button key={index} onClick={() => handleDesignSelect(src)}>
+                                            <img src={src} alt={`Design ${index + 1}`} style={{ width: "100px", margin: "10px" }} />
+                                        </button>
+                                    ))}
+                                </div>
+                                                
+                                    <p><button onClick={()=> clearDesign()}>Clear Design</button></p>
+                                    <p>{design && (
+                                    <>
+                                    <h2>Design choosen</h2><img src={design} alt="selected Design" style={{width:"100px",margin:"10px"}}/>
+                                    </>
+                                    )}<br/></p>   
+                                
+                        </div>
+                    </div>)
+                }
+
+
+
+                {textbox && (
+                        <div className="TextEditor">
+                            <TextEditor onSendData={handleData} closeTextEditor={closeTextEditor} />
+                        </div>
+                        )
+                }
+
        
-                    
-                    
-            </div>  
         </div>
     );
 };

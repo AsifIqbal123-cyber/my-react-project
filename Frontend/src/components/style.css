@@ -163,42 +163,64 @@
     margin-right: 50px;
 }
 
-
-
-.dashboard{
+.design_container{
+    display: flex;
     background-color: beige;
-    justify-content: center;
-    align-items: center;
     height: 700px;
     width: 1000px;
+    border:solid green 4px
+}
+
+.dashboard{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 700px;
+    width: 400px;
+    border: solid 2px red;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.functions{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 700px;
+    width: 600px;
+    border: solid 2px black;
+    align-items: center;
+
 }
 
 .dashboard>button{
-    position:relative;
-    right: 300px;
-    top: 100px;
-    margin-top: 10px;
+    display: flex;
+    width: 180px;
+    flex-direction: column;
 }
 
 .product_title{
-    position: relative;
-    width: 400px;
-    left: 400px;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    justify-content: center;
+    align-items: center;
 }
 
 .product_title>h2{
     color: black;
-    position: relative;
-    bottom:180px;
-    left: 30px;
+    justify-content: center;
+    bottom: 300px;
+    left: 165px;
 }
 
 .product_title>img{
-    position:relative;
+    display: flex;
+    flex-direction: column;
     height: 310px;
-    bottom:140px;
-    left: 30px;
-    
+    justify-content: center;
+    align-items: center;
 }
 
 .popup_content{
@@ -215,33 +237,40 @@
     overflow-y: auto;
 }
 
+.selected_design{
+    position: relative;
+}
 
 .selected_design>img{
-    position: absolute;
-    top: 0.45%;
-    right: 41%;
-    justify-content: center;
-    align-items: center;
+    position:relative;
+    bottom:210%;
     width: 100px;
     height: 100px;
 }
 
 
+.TextEditor{
+    position: relative;
+    right: 1%;
+}
+
+
+
+
 .editor-container {
-    width: 60%;
-    margin: -90px auto;
+    width: 35rem;
+    position: absolute;
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
     background: #fff;
-    margin-right: 60px;
-
+    bottom: 10%;
+    right: 5%;
 }
 
 .toolbar {
     position: relative;
     z-index: 10;
-    display: flex;
     gap: 10px;
     margin-bottom: 10px;
 }
@@ -252,6 +281,7 @@
     background: #007bff;
     color: white;
     cursor: pointer;
+    margin-right: 10px;
     border-radius: 3px;
 }
 
@@ -275,27 +305,29 @@
 }
 
 .overlay_text{
-    position: absolute;
-    top: 0.45%;
-    right: 41%;
+    position: relative;
     justify-content: center;
-    align-items: center;
-    width: 100px;
-    height: 100px;
+    bottom: 55%;
+    color: black;
 }
 
 .uploadbox{
-    width: 30%;
-    margin: -90px auto;
+    width: 20%;
+    top:35%;
     border: 1px solid black;
-    padding: 60px;
+    padding: 20px;
     border-radius: 5px;
     background: #fff;
-    margin-right: 160px;
-    position: relative;
+    position: absolute;
+    z-index: 1000;
 }
 
 .button.image{
     position: absolute;
     z-index: 1000;
+}
+
+.add_cart{
+    position: absolute;
+    top:75%;
 }
