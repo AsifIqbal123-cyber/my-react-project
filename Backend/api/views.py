@@ -6,6 +6,9 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 from django.http import JsonResponse
 import os
+from .models import Order
+from .serializers import OrderSerializer
+from rest_framework import status
 
 # Create your views here.
 
@@ -37,3 +40,11 @@ def upload_image(request):
 def home(request):
     return JsonResponse("Welcome to the Django Backend ! Use /upload/ to upload files.")
 
+@api_view(['POST'])
+def create_order(request):
+    serializer= OrderSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    print(serializer.errors)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
