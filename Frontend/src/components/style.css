@@ -191,7 +191,6 @@
     width: 600px;
     border: solid 2px black;
     align-items: center;
-
 }
 
 .dashboard>button{
@@ -330,4 +329,10 @@
 .add_cart{
     position: absolute;
     top:75%;
+}
+
+.cart_div{
+    display:'flex'; 
+    justify-content:'flex-start';
+    margin-top:'40px';
 }
