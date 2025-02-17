@@ -8,8 +8,8 @@ class UploadedImage(models.Model):
 
 class Order(models.Model):
     product_name = models.CharField(max_length=255)
-    product_image =models.URLField()
-    design_image = models.URLField(blank=True,null=True)
+    product_image =models.ImageField(upload_to='product_images/')
+    design_image = models.ImageField(upload_to='design_images/')
     custom_text = models.TextField(blank=True, null=True)
     quantity = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -65,18 +65,32 @@ const Cart = () => {
 
     const saveOrderToBackend = async (order) => {
         try {
+
+            console.log("Product Image Type:", typeof order.product.image);
+            console.log("Design Image Type:", typeof order.design);
+
+            const formData = new FormData();
+            formData.append("product_name",order.product.name);
+            if (order.product.image instanceof File){
+                formData.append("product_image",order.product.image);
+            } else {
+                console.error("Product image must be a file objects.");
+                return;
+            }
+
+            if (order.design instanceof File){
+                formData.append("design_image", order.design);
+            } else if (order.design){
+                console.error("Design image must be a file object.");
+                return;
+            }
+
+            formData.append("custom_text", order.text || "");
+            formData.append("quantity", order.quantity);
+
             const response = await fetch ("http://localhost:8000/api/orders/", {
                 method: "POST",
-                headers: {
-                    "Content-Type":" application/json",
-                },
-                body: JSON.stringify({
-                    product_name: order.product.name,
-                    product_image: order.product.image,
-                    design_image: order.design || "",
-                    custom_text: order.text || "",
-                    quantity: order.quantity,
-                }),
+                body: formData,
         });
 
         if (response.ok) {
@@ -121,7 +135,7 @@ const Cart = () => {
                                     <td style={{ padding: '10px' }}>
                                         {order.product ? (
                                         <img
-                                            src={product.image}
+                                            src={order.product?.image || ""}
                                             alt="Selected Product"
                                             style={{ width: "150px" }}
                                         />
@@ -133,7 +147,7 @@ const Cart = () => {
                                     <td style={{ padding: '10px' }}>
                                         {order.design ? (
                                         <img
-                                            src={design}
+                                            src={order.design || ""}
                                             alt="Uploaded Design"
                                             style={{ width: "150px" }}
                                         />
