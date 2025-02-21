@@ -83,7 +83,7 @@ const Design = () => {
         if (response.ok){
             const fullUrl = `${data.file_url}`
             console.log(fullUrl);
-            setUploadedImage(fullUrl);
+            setUploadedImage(file);
             setDesign(fullUrl);
             alert("File uploaded successfully!");
         } else {
@@ -102,12 +102,70 @@ const Design = () => {
     const saveImage=()=>{
         setDesign(uploadedImage)
         setUploadBox(!uploadbox);
-    }
+    };
+
+    const urlToFile = async (url,filename, mimeType)=>{
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new File([blob], filename, {type:mimeType});
+    };
+
+    const saveOrderToBackend = async () => {
+        try {
+
+            const orderData = {
+                id: Date.now(),
+                product: {
+                    name: product.name,
+                    image: product.image,
+                },
+                design: design|| "",
+                text: text || "",
+                isSelected: false,
+                quantity: 1,
+                isChecked: true,
+            }
+
+            const formData = new FormData();
+            formData.append("product_name", orderData.name);
+            console.log
+
+            const productImageFile = await urlToFile(orderData.image,"product_image.webp","image/webp");
+            formData.append("product_image", productImageFile);
+
+
+            if (orderData.design){
+                const designImageFile = await urlToFile(orderData.design,"design_image.png","image/png");
+                formData.append("design_image", designImageFile);
+            } 
+
+            formData.append("custom_text", orderData.text || "");
+            formData.append("quantity", orderData.quantity);
+
+            const response = await fetch ("http://localhost:8000/api/orders/", {
+                method: "POST",
+                body: formData,
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Order saved successfully:", data);
+
+        } else {
+            console.error("Failed to save order");
+        }
+        }catch (error) {
+            console.error("Error while saving order:", error);
+        }
+    };
+
 
     const sendCart=()=>{
-        
+        saveOrderToBackend();
         navigate('./cart',{state: user_data});
     };
+
+    
 
   
   
@@ -157,7 +215,7 @@ const Design = () => {
                         {uploadedImage && (
                             <div className="uploaded-image-preview">
                                 <h3 style={{color:"black"}}>Preview:</h3>
-                                <img src={uploadedImage} alt="Uploaded" style={{width:"150px", marginTop:"10px"}}/>
+                                <img src={URL.createObjectURL(uploadedImage)} alt="Uploaded" style={{width:"150px", marginTop:"10px"}}/>
                                 <br></br>
                                 <button onClick={saveImage}>Upload</button>
                             </div>)
@@ -165,7 +223,7 @@ const Design = () => {
                     </div>
                     )}
 
-                <button className="add_cart" onClick={sendCart}>Add to card</button>
+                <button className="add_cart" onClick={sendCart}>Add to cart</button>
             </div>
 
                 {designPopupVisible && (

@@ -40,11 +40,41 @@ def upload_image(request):
 def home(request):
     return JsonResponse("Welcome to the Django Backend ! Use /upload/ to upload files.")
 
-@api_view(['POST'])
+@api_view(['POST','GET'])
 def create_order(request):
-    serializer= OrderSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    print(serializer.errors)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request.method == 'POST':
+        serializer= OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'GET':
+        orders = Order.objects.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+
+@api_view(['DELETE'])
+def delete_order(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+        order.delete()
+        return Response({"message": "Order deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    except Order.DoesNotExist:
+        return Response({"error":"Order not found"},status=status.HTTP_404_NOT_FOUND)
+
+
+
+
+
+
+# @api_view(['GET'])
+# def get_order(request, order_id):
+#     try:
+#         order = Order.objects.get(id=order_id)
+#         serializer = OrderSerializer(order)
+#         return Response(serializer.data)
+#     except Order.DoesNotExist:
+#         return Response({"error": "Order not found"}, status =404)

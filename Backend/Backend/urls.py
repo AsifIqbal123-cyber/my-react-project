@@ -21,6 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from api.views import home
 from api.views import create_order
+from api.views import delete_order
 
 
 urlpatterns = [
@@ -28,4 +29,5 @@ urlpatterns = [
     path('',home, name='home'),
     path('upload/', upload_image, name='upload_image'),
     path('api/orders/', create_order, name='create_order'),
+    path('api/orders/<int:order_id>/', delete_order, name='delete_order'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

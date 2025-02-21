@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { useLocation } from "react-router-dom";
 
 
@@ -6,10 +6,40 @@ const Cart = () => {
     const location = useLocation();
     const { design, text, product } = location.state || {};
 
-    const [orders, setOrders]= useState ([
-        {id:1, product,design,text, isSelected:false,quantity:1, isChecked:false},
-    ]);
+    const [orders, setOrders] = useState([]);
 
+
+    useEffect(()=> {
+        const fetchOrders = async () =>{
+            try{
+                const response = await fetch("http://localhost:8000/api/orders/");
+                if (!response.ok) throw new Error ("Failed to fetch orders");
+                const data = await response.json();
+                const transformedOrders = data.map((order)=>({
+                    id: order.id,
+                    product: {
+                        name: order.product_name,
+                        image: order.product_image,
+                    },
+                    design: order.design_image || "",
+                    text: order.custom_text || "",
+                    isSelected: false,
+                    quantity: order.quantity,
+                    isChecked: true,
+                }));
+                setOrders(transformedOrders);
+                
+            } catch (error){
+                console.error("Error fetching orders:", error);
+            }
+        };
+        fetchOrders();
+    },[]);
+
+ 
+ 
+ 
+ 
 
     const toggleSelect = (id)=>{
         setOrders((prevOrders)=>
@@ -35,7 +65,8 @@ const Cart = () => {
                 const updatedOrder = {...order, isChecked: !order.isChecked};
 
                 if(!order.isChecked){
-                    saveOrderToBackend(updatedOrder);
+                    console.log(updatedOrder);
+                    //saveOrderToBackend(updatedOrder);
                 }
 
                 return updatedOrder;
@@ -45,10 +76,23 @@ const Cart = () => {
         );
     };
 
-    const deleteorder = (id) => {
-        setOrders((prevOrders)=>
-            prevOrders.filter((order) => order.id !==id));
+    const deleteOrder = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/orders/${id}/`, {
+                method: "DELETE",
+            });
+
+            if (response.ok) {
+                console.log(`Order with ID ${id} deleted successfully`);
+                setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
+            } else {
+                console.error("Failed to delete order from backend");
+            }
+        } catch (error) {
+            console.error("Error deleting order:", error);
+        }
     };
+
 
     const addOrder = ()=>{
         const newOrder = {
@@ -60,7 +104,15 @@ const Cart = () => {
             quantity:1,
             isChecked: false,
         };
-        setOrders([...orders,newOrder]);
+        saveOrderToBackend(newOrder);
+
+        // setOrders((prevOrders)=>[...prevOrders,newOrder]);
+    };
+
+    const urlToFile = async (url,filename, mimeType)=>{
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new File([blob], filename, {type:mimeType});
     };
 
     const saveOrderToBackend = async (order) => {
@@ -71,19 +123,15 @@ const Cart = () => {
 
             const formData = new FormData();
             formData.append("product_name",order.product.name);
-            if (order.product.image instanceof File){
-                formData.append("product_image",order.product.image);
-            } else {
-                console.error("Product image must be a file objects.");
-                return;
-            }
 
-            if (order.design instanceof File){
-                formData.append("design_image", order.design);
-            } else if (order.design){
-                console.error("Design image must be a file object.");
-                return;
-            }
+            const productImageFile = await urlToFile(order.product.image,"product_image.webp","image/webp");
+            formData.append("product_image", productImageFile);
+
+
+            if (order.design){
+                const designImageFile = await urlToFile(order.design,"design_image.png","image/png");
+                formData.append("design_image", designImageFile);
+            } 
 
             formData.append("custom_text", order.text || "");
             formData.append("quantity", order.quantity);
@@ -96,6 +144,7 @@ const Cart = () => {
         if (response.ok) {
             const data = await response.json();
             console.log("Order saved successfully:", data);
+
         } else {
             console.error("Failed to save order");
         }
@@ -104,8 +153,25 @@ const Cart = () => {
         }
     };
 
+    const image_product_retrieve = (order) => {
+        if (order.product.image.startsWith("http")){
+            return order.product.image;
+        }
+        return `http://localhost:8000${order.product.image}`;
+    };
+
+    const image_design_retrieve = (order) => {
+        
+        if (order.design.startsWith("http")){
+            return order.design;
+        }
+        return `http://localhost:8000${order.design}`;
+    };
+
+
+
     return (
-        <>        
+        <>
         <div style={{ width: '70vw', height:'100vh', paddingTop:'20px', marginLeft:'-20%'}}>
             {/* Header Section */}
             <div style={{ display: 'flex', justifyContent:'flex-start',alignItems: 'center', marginTop: '40px' }}>
@@ -133,9 +199,10 @@ const Cart = () => {
                             orders.map((order)=> (
                                 <tr key={order.id}>
                                     <td style={{ padding: '10px' }}>
-                                        {order.product ? (
+                                        {order.product ? ( 
+
                                         <img
-                                            src={order.product?.image || ""}
+                                            src={image_product_retrieve(order)}
                                             alt="Selected Product"
                                             style={{ width: "150px" }}
                                         />
@@ -147,7 +214,7 @@ const Cart = () => {
                                     <td style={{ padding: '10px' }}>
                                         {order.design ? (
                                         <img
-                                            src={order.design || ""}
+                                            src={image_design_retrieve(order)|| ""}
                                             alt="Uploaded Design"
                                             style={{ width: "150px" }}
                                         />
@@ -166,7 +233,7 @@ const Cart = () => {
                                             Quantity:
                                             <input
                                                 type="number"
-                                                value={order.quantity}
+                                                value={order.quantity ?? 1}
                                                 onChange={(e) => handleQuantityChange(order.id, e.target.value)}
                                                 min="1"
                                                 style={{ marginLeft: "10px", padding: "5px" }}
@@ -183,7 +250,7 @@ const Cart = () => {
                                                 />
                                                 Confirm Order
                                             </label>
-                                            <button onClick={()=>deleteorder(order.id)} style={{ color: "red" }}>Delete Order</button>
+                                            <button onClick={()=>deleteOrder(order.id)} style={{ color: "red" }}>Delete Order</button>
                                         </div>
                                     </td>
                                 </tr>
